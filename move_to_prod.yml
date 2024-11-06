@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    ansible_dir: '/var/opt/ansible/M2P'
+    ITM6_used: True 
+  pre_tasks: 
+    - name: Create folder for file uploads
+      file:
+        path: "{{ ansible_dir }}"
+        state: directory
+  roles:
+        - secondary_logging
+        - ibmssh_user
+        - modification_file
+        - SRM_agent  ## SRM agent not supported on Debian
+        - Splunk
+        - EDR_falcon
+        - Symantec
+        - TrendMicro
+        - tenable.io
+        - role: ITM6_conf ## only ping monitoring configured on Debian
+          when: ITM6_used == True
+        - vsnap
+        - HBA_utility
+        - nmon
+        - yum_update
+        - apt_update
+  post_tasks:
+    - name: Delete folder for file uploads
+      file:
+        path: "{{ ansible_dir }}"
+        state: absent

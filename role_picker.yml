@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes
+  vars:
+    ansible_dir: '/var/opt/ansible/M2P'
+    ITM6_used: True 
+    
+  tasks:
+    - name: Create folder for file uploads
+      file:
+        path: "{{ ansible_dir }}"
+        state: directory
+        
+    - name: Execute given roles
+      include_role:
+        name: "{{ item }}"
+      loop: "{{ picked_roles }}"
+      
+    - name: Delete folder for file uploads
+      file:
+        path: "{{ ansible_dir }}"
+        state: absent
